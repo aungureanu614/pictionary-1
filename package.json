@@ -1,0 +1,28 @@
+{
+  "name": "pictionary",
+  "version": "1.0.0",
+  "description": "pictionary game for thinkful.com class",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tstuart/pictionary.git"
+  },
+  "keywords": [
+    "thinkful.com",
+    "node",
+    "socket.io"
+  ],
+  "author": "Tim Stuart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tstuart/pictionary/issues"
+  },
+  "homepage": "https://github.com/tstuart/pictionary#readme",
+  "dependencies": {
+    "express": "^4.12.4",
+    "socket.io": "^1.3.5"
+  }
+}
