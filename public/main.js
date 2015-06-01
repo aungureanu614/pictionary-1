@@ -13,12 +13,24 @@ var pictionary = function() {
         context.fill();
     };
 
+    var clearCanvas = function() {
+        // Is this best way to clear canvas?
+        canvas[0].width = canvas[0].offsetWidth;
+    };
+
     // set up socket.io
     var socket = io();
+    socket.on('connected', function(drawList) {
+        drawList.forEach(function(position) {
+            draw(position);
+        });
+    });
+
     socket.on('draw', draw);
     socket.on('guess', function(guess) {
         $('#guesses').text(guess);
     });
+    socket.on('clear', clearCanvas);
 
     // setup canvas and context
     canvas = $('canvas');
@@ -49,6 +61,13 @@ var pictionary = function() {
         }
         socket.emit('guess', guessBox.val());
         guessBox.val('');
+    });
+
+
+    // handle clear canvas button
+    $('#clearButton').on('click', function(){
+        clearCanvas();
+        socket.emit('clear');
     });
 };
 
