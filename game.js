@@ -4,9 +4,12 @@
  */
 
 
-// the game engine will have a game state
+// the game engine will do most of the heavy lifting for the server
 var GameEngine = function() {
 
+    // can add more words as needed and the randomizer should pick them up.
+    // however, there is nothing to prevent words from being repeated.
+    // That could be a future enhancement.
     this.WORDS = [
         "word", "letter", "number", "person", "pen", "class", "people",
         "sound", "water", "side", "place", "man", "men", "woman", "women", "boy",
@@ -20,27 +23,29 @@ var GameEngine = function() {
         "mountain", "horse", "watch", "color", "face", "wood", "list", "bird",
         "body", "dog", "family", "song", "door", "product", "wind", "ship", "area",
         "rock", "order", "fire", "problem", "piece", "top", "bottom", "king",
-        "space"
+        "space", "football"
     ];
 
-    this.drawerID = null;
-    this.players = new Object();
-    this.currentWord = null;
-    this.setWord();
-    this.drawList = [];
+    this.drawerID = null;           // keep track of current drawer by socket id
+    this.players = new Object();    // keep list of currently connected players
+    this.currentWord = null;        // keep track of current word to be guessed
+    this.setWord();                 // on startup, set the current word
+    this.drawList = [];             // keep track of drawlist of midstream connections
 
 };
 
+// add a player to the list.
 GameEngine.prototype.addPlayer = function(id, nickName) {
     this.players[id] = nickName;
 
-    // if the game state drawerID is null, make this
+    // If the game does not have a current drawer, make this
     // player the drawer
     if (!this.drawerID) {
         this.drawerID = id;
     }
 };
 
+// remove a player from list.  Accommodate drawer disconnecting
 GameEngine.prototype.removePlayer = function(id) {
     if (!this.players[id]) {
         return;
@@ -66,24 +71,32 @@ GameEngine.prototype.removePlayer = function(id) {
     }
 };
 
+// after someone guesses correctly, we need to change drawers.
+// this will allow for this.
 GameEngine.prototype.setDrawer = function(id) {
     this.drawerID = id;
 };
 
+// Select a random word and set as current word.
 GameEngine.prototype.setWord = function() {
     // get a random index for the word array
     var rndNum = Math.floor((Math.random() * (this.WORDS.length - 1)));
     this.currentWord = this.WORDS[rndNum];
 };
 
+// add positions to draw list so clients connecting midstream can
+// get current drawing
 GameEngine.prototype.addDrawPosition = function(position) {
     this.drawList.push(position);
 };
 
+// clear drawlist (should happen on a winner and when
+// drawer clears his/her canvas)
 GameEngine.prototype.clearDrawList = function() {
     this.drawList = [];
 };
 
+// return needed game information for client use
 GameEngine.prototype.getGameInfo = function() {
     return {
         drawerID: this.drawerID,
@@ -92,11 +105,9 @@ GameEngine.prototype.getGameInfo = function() {
     }
 };
 
+// check guess against current word
 GameEngine.prototype.isGuessCorrect = function(guess) {
     return (this.currentWord.toUpperCase() === guess.toUpperCase())
 };
-
-//var ge = new GameEngine();
-//console.log(ge.currentWord);
 
 exports.GameEngine = GameEngine;
