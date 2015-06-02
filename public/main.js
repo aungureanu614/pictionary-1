@@ -4,6 +4,21 @@
 
 
 var pictionary = function() {
+    // get user's nickname and set on page
+    var nickName = null;
+    while (!nickName) {
+        nickName = window.prompt("Please enter your nickname:", "");
+    }
+    $('#nickName').html(nickName);
+    
+    // add message to message area
+    var addMessage = function(message) {
+        $('#messages').append('<div>' + message + '</div>');
+    };
+
+    addMessage('This is where system messages will go');
+    addMessage('The word dog was guessed by Tim.  Tim is now the drawer');
+
     var canvas, context;
     var drawing = false;
 

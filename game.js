@@ -1,92 +1,91 @@
+
 /**
  * Created by tstuart on 6/1/15.
  */
 
 
-// words
-var WORDS = [
-    "word", "letter", "number", "person", "pen", "class", "people",
-    "sound", "water", "side", "place", "man", "men", "woman", "women", "boy",
-    "girl", "year", "day", "week", "month", "name", "sentence", "line", "air",
-    "land", "home", "hand", "house", "picture", "animal", "mother", "father",
-    "brother", "sister", "world", "head", "page", "country", "question",
-    "answer", "school", "plant", "food", "sun", "state", "eye", "city", "tree",
-    "farm", "story", "sea", "night", "day", "life", "north", "south", "east",
-    "west", "child", "children", "example", "paper", "music", "river", "car",
-    "foot", "feet", "book", "science", "room", "friend", "idea", "fish",
-    "mountain", "horse", "watch", "color", "face", "wood", "list", "bird",
-    "body", "dog", "family", "song", "door", "product", "wind", "ship", "area",
-    "rock", "order", "fire", "problem", "piece", "top", "bottom", "king",
-    "space"
-];
+// the game engine will have a game state
+var GameEngine = function() {
 
-// game state object
-// has drawerID (which will be the socket id of the assigned drawer)
-// has an array of player objects (socketid/nickName pair)
-// and current word to be drawn.
-var GameState = function() {
+    this.WORDS = [
+        "word", "letter", "number", "person", "pen", "class", "people",
+        "sound", "water", "side", "place", "man", "men", "woman", "women", "boy",
+        "girl", "year", "day", "week", "month", "name", "sentence", "line", "air",
+        "land", "home", "hand", "house", "picture", "animal", "mother", "father",
+        "brother", "sister", "world", "head", "page", "country", "question",
+        "answer", "school", "plant", "food", "sun", "state", "eye", "city", "tree",
+        "farm", "story", "sea", "night", "day", "life", "north", "south", "east",
+        "west", "child", "children", "example", "paper", "music", "river", "car",
+        "foot", "feet", "book", "science", "room", "friend", "idea", "fish",
+        "mountain", "horse", "watch", "color", "face", "wood", "list", "bird",
+        "body", "dog", "family", "song", "door", "product", "wind", "ship", "area",
+        "rock", "order", "fire", "problem", "piece", "top", "bottom", "king",
+        "space"
+    ];
+
     this.drawerID = null;
     this.players = new Object();
     this.currentWord = null;
-};
-
-// the game engine will have a game state
-var GameEngine = function() {
-    this.gameState = new GameState();
     this.setWord();
     this.drawList = [];
+
 };
 
 GameEngine.prototype.addPlayer = function(id, nickName) {
-    this.gameState.players[id] = nickName;
+    this.players[id] = nickName;
 
     // if the game state drawerID is null, make this
     // player the drawer
-    if (!this.gameState.drawerID) {
-        this.gameState.drawerID = id;
+    if (!this.drawerID) {
+        this.drawerID = id;
     }
 };
 
 GameEngine.prototype.removePlayer = function(id) {
-    if (!this.gameState.players[id]) {
+    if (!this.players[id]) {
         return;
     }
 
-    delete this.gameState.players[id];
+    delete this.players[id];
 
     // check to see if it was the drawer that is being removed
     // if so (and there is still more
-    if (id === this.gameState.drawerID) {
-        if (this.gameState.players.length > 0) {
+    if (id === this.drawerID) {
+
+        if (Object.keys(this.players).length > 0) {
             // make the first object the drawer
-            for(var index in this.gameState.players) {
-                this.gameState.drawerID = this.gameState.players[index];
+            for(var index in this.players) {
+                this.drawerID = index;
                 break;
             }
 
         } else {
             // out of players, set drawerID to null
-            this.gameState.drawerID = null;
+            this.drawerID = null;
         }
     }
 };
 
 GameEngine.prototype.setDrawer = function(id) {
-    this.gameState.drawerID = id;
+    this.drawerID = id;
 };
 
 GameEngine.prototype.setWord = function() {
     // get a random index for the word array
-    var rndNum = Math.floor((Math.random() * (WORDS.length - 1)));
-    this.gameState.currentWord = WORDS[rndNum];
+    var rndNum = Math.floor((Math.random() * (this.WORDS.length - 1)));
+    this.currentWord = this.WORDS[rndNum];
 };
 
 GameEngine.prototype.addDrawPosition = function(position) {
-    this.drawList.pop(position);
+    this.drawList.push(position);
 };
 
 GameEngine.prototype.clearDrawList = function() {
     this.drawList = [];
 };
 
-exports.GameEngine = GameEngine();
+
+//var ge = new GameEngine();
+//console.log(ge.currentWord);
+
+exports.GameEngine = GameEngine;
