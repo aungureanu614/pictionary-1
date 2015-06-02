@@ -84,6 +84,17 @@ GameEngine.prototype.clearDrawList = function() {
     this.drawList = [];
 };
 
+GameEngine.prototype.getGameInfo = function() {
+    return {
+        drawerID: this.drawerID,
+        currentWord: this.currentWord,
+        players: this.players
+    }
+};
+
+GameEngine.prototype.isGuessCorrect = function(guess) {
+    return (this.currentWord.toUpperCase() === guess.toUpperCase())
+};
 
 //var ge = new GameEngine();
 //console.log(ge.currentWord);
